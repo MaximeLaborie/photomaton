@@ -157,7 +157,7 @@ namespace photomaton.ViewModels
 
         #region final image merge
 
-        private string _lastMerge = "";
+        private string _lastMerge = null;
 
         public string LastMerge
         {

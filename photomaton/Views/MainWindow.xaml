@@ -82,7 +82,7 @@
         </Border>
 
         <Image Margin="100"
-               Source="{Binding LastMerge}"
+               Source="{Binding LastMerge, TargetNullValue={x:Null}}"
                Visibility="{Binding IsShowingMerge,
                                     Converter={StaticResource BooleanToVisibilityConverter}}" />
 
