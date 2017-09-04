@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -18,50 +19,64 @@ namespace photomaton.Views
         public MainWindow()
         {
             InitializeComponent();
-            videoCapElement.NewVideoSample += OnNewVideoSample;
+            //Loaded += new RoutedEventHandler(OnWindowLoaded);
         }
 
-        private void OnNewVideoSample(object sender, VideoSampleArgs e)
-        {
-            if (IsSampleRequired)
-            {
-                var bmp = e.VideoFrame;
+        //private void OnWindowLoaded(object sender, RoutedEventArgs e)
+        //{
+        //    videoCapElement.NewVideoSample += OnNewVideoSample;
+        //}
 
-                Task.Run(() => {
-                    var vm = DataContext as MainWindowViewModel;
-                    BitmapEncoder encoder = new JpegBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(bmp));
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        encoder.Save(ms);
-                        videoCapElement.Play();
-                        vm.CameraShot = ms.ToArray();
-                    }
-                });
+        //private void OnNewVideoSample(object sender, VideoSampleArgs e)
+        //{
+        //    if (IsSampleRequired)
+        //    {
+        //        var bmp = e.VideoFrame;
 
-            }
-        }
+        //        Task.Run(() => {
+        //            var vm = DataContext as MainWindowViewModel;
+
+        //            ImageConverter converter = new ImageConverter();
+        //            vm.CameraShot = (byte[])converter.ConvertTo(bmp, typeof(byte[]));
+
+        //            //BitmapEncoder encoder = new JpegBitmapEncoder();
+        //            //encoder.Frames.Add(BitmapFrame.Create(bmp));
+        //            //using (MemoryStream ms = new MemoryStream())
+        //            //{
+        //            //    encoder.Save(ms);
+        //            //    videoCapElement.Play();
+        //            //    vm.CameraShot = ms.ToArray();
+        //            //}
+        //        });
+
+        //    }
+        //}
 
         public void SetCameraShotToViewModel()
         {
             IsSampleRequired = true;
-            //var vm = DataContext as MainWindowViewModel;
-            //vm.CameraShot = GetCameraShot();
+            var vm = DataContext as MainWindowViewModel;
+            vm.CameraShot = GetCameraShot();
         }
 
-        //private byte[] GetCameraShot()
-        //{
-        //    videoCapElement.Pause();
-        //    RenderTargetBitmap bmp = new RenderTargetBitmap((int)videoCapElement.ActualWidth, (int)videoCapElement.ActualHeight, 96, 96, PixelFormats.Default);
-        //    bmp.Render(videoCapElement);
-        //    BitmapEncoder encoder = new JpegBitmapEncoder();
-        //    encoder.Frames.Add(BitmapFrame.Create(bmp));
-        //    using (MemoryStream ms = new MemoryStream())
-        //    {
-        //        encoder.Save(ms);
-        //        videoCapElement.Play();
-        //        return ms.ToArray();
-        //    }
-        //}
+        private byte[] GetCameraShot()
+        {
+            videoCapElement.Pause();
+
+            Image img = videoCapElement.CloneSingleFrameImage();
+            RenderTargetBitmap bmp = new RenderTargetBitmap((int)img.ActualWidth, (int)img.ActualHeight, 0, 0, System.Windows.Media.PixelFormats.Default);
+            bmp.Render(img);
+
+            //RenderTargetBitmap bmp = new RenderTargetBitmap((int)videoCapElement.ActualWidth, (int)videoCapElement.ActualHeight, 96, 96, PixelFormats.Default);
+            //bmp.Render(videoCapElement);
+            BitmapEncoder encoder = new JpegBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bmp));
+            using (MemoryStream ms = new MemoryStream())
+            {
+                encoder.Save(ms);
+                videoCapElement.Play();
+                return ms.ToArray();
+            }
+        }
     }
 }

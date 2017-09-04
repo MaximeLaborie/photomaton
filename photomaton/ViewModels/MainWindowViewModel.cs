@@ -23,7 +23,7 @@ namespace photomaton.ViewModels
         public MainWindowViewModel()
         {
             Title = "Photomaton";
-            IsFullScreen = true;
+            IsFullScreen = false;
 
             CaptureCommand = new DelegateCommand(Capture, CanCapture);
             ToggleFullScreenCommand = new DelegateCommand(ToggleFullScreen, CanToggleFullScreen);
