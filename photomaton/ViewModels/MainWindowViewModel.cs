@@ -23,7 +23,7 @@ namespace photomaton.ViewModels
         public MainWindowViewModel()
         {
             Title = "Photomaton";
-            IsFullScreen = false;
+            IsFullScreen = true;
 
             CaptureCommand = new DelegateCommand(Capture, CanCapture);
             ToggleFullScreenCommand = new DelegateCommand(ToggleFullScreen, CanToggleFullScreen);
@@ -264,6 +264,7 @@ namespace photomaton.ViewModels
             Bitmap bitmap1 = new Bitmap(imgWidth + 80, 40 + (imgHeight + 40) * images.Count);
             using (Graphics g = Graphics.FromImage(bitmap1))
             {
+                g.Clear(System.Drawing.Color.White);
                 for (var i = 0; i < images.Count; ++i)
                 {
                     g.DrawImage(images[i], 40, 40 + i * (imgHeight + 40));
@@ -276,6 +277,7 @@ namespace photomaton.ViewModels
             Bitmap bitmap2 = new Bitmap(40 + (imgWidth + 40) * nbCol , 40 + (imgHeight + 40) * nbRow);
             using (Graphics g = Graphics.FromImage(bitmap2))
             {
+                g.Clear(System.Drawing.Color.White);
                 for (var i = 0; i < images.Count; ++i)
                 {
                     var col = i % nbCol;
@@ -296,6 +298,7 @@ namespace photomaton.ViewModels
         public void ToggleStretch(StretchModes stretchMode)
         {
             Stretch = stretchMode.Stretch;
+            IsStretchMenuOpen = false;
         }
 
         public void OpenStretchOptions()
@@ -312,6 +315,7 @@ namespace photomaton.ViewModels
         public void ChangeDevice(DsDevice deviceName)
         {
             CaptureDevice = deviceName;
+            AreSettingsOpen = false;
         }
 
         #endregion methods
